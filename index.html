@@ -1,98 +1,376 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-<meta charset="UTF-8">
-<title>Khai Nguyen | Portfolio</title>
-<link rel="stylesheet" href="style.css">
-</head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Khai Nguyen | Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    :root {
+      --black: #0e0e0e;
+      --gray: #6b6b6b;
+      --light: #f5f5f5;
+      --border: #e0e0e0;
+      --white: #ffffff;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--white);
+      color: var(--black);
+      min-height: 100vh;
+      display: flex;
+      align-items: stretch;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ── CUSTOM CURSOR ── */
+    .cursor-dot {
+      width: 6px; height: 6px;
+      background: var(--black);
+      border-radius: 50%;
+      position: fixed; pointer-events: none; z-index: 9999;
+      transform: translate(-50%, -50%);
+    }
+    .cursor-ring {
+      width: 28px; height: 28px;
+      border: 1.5px solid rgba(14,14,14,0.4);
+      border-radius: 50%;
+      position: fixed; pointer-events: none; z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: width 0.25s ease, height 0.25s ease, border-color 0.25s;
+    }
+    .cursor-ring.hovered {
+      width: 46px; height: 46px;
+      border-color: rgba(14,14,14,0.65);
+    }
+
+    /* ── LAYOUT ── */
+    .wrapper { display: flex; width: 100%; min-height: 100vh; }
+
+    /* ── LEFT ── */
+    .left {
+      width: 320px; flex-shrink: 0;
+      background: var(--light);
+      border-right: 1px solid var(--border);
+      padding: 56px 40px;
+      display: flex; flex-direction: column; align-items: center;
+      position: sticky; top: 0; height: 100vh; overflow-y: auto;
+      opacity: 0; transform: translateX(-28px);
+      animation: slideInLeft 0.75s cubic-bezier(0.22,1,0.36,1) 0.1s forwards;
+    }
+    @keyframes slideInLeft { to { opacity: 1; transform: translateX(0); } }
+
+    /* avatar float */
+    .avatar {
+      width: 130px; height: 130px; border-radius: 50%;
+      object-fit: cover; border: 3px solid var(--border);
+      margin-bottom: 28px; background: var(--border);
+      animation: float 5s ease-in-out infinite;
+      transition: box-shadow 0.35s, border-color 0.35s;
+    }
+    .avatar:hover {
+      box-shadow: 0 10px 36px rgba(0,0,0,0.13);
+      border-color: #aaa;
+    }
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-8px); }
+    }
+
+    .left h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.55rem; font-weight: 600; letter-spacing: -0.01em;
+      text-align: center; margin-bottom: 6px;
+    }
+    .role {
+      font-size: 0.8rem; font-weight: 500; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--gray);
+      text-align: center; margin-bottom: 28px;
+    }
+
+    /* animated divider */
+    .divider {
+      width: 0; height: 1px; background: var(--black);
+      margin: 0 auto 28px;
+      animation: expandLine 0.6s cubic-bezier(0.22,1,0.36,1) 0.85s forwards;
+    }
+    @keyframes expandLine { to { width: 36px; } }
+
+    .bio {
+      font-size: 0.88rem; line-height: 1.7; color: #3a3a3a;
+      text-align: center; margin-bottom: 32px;
+      opacity: 0; animation: fadeUp 0.6s ease 1.0s forwards;
+    }
+
+    /* tags stagger */
+    .tags {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      justify-content: center; margin-bottom: 40px;
+    }
+    .tag {
+      font-size: 0.72rem; font-weight: 500; letter-spacing: 0.06em;
+      text-transform: uppercase; border: 1px solid var(--border);
+      padding: 4px 10px; border-radius: 2px;
+      background: var(--white); color: var(--black);
+      cursor: none;
+      opacity: 0; animation: fadeUp 0.4s ease forwards;
+      transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.18s;
+    }
+    .tag:nth-child(1){animation-delay:1.05s}
+    .tag:nth-child(2){animation-delay:1.13s}
+    .tag:nth-child(3){animation-delay:1.21s}
+    .tag:nth-child(4){animation-delay:1.29s}
+    .tag:nth-child(5){animation-delay:1.37s}
+    .tag:nth-child(6){animation-delay:1.45s}
+    .tag:hover { background: var(--black); color: var(--white); border-color: var(--black); transform: translateY(-2px); }
+
+    .links {
+      display: flex; gap: 16px; margin-top: auto;
+      opacity: 0; animation: fadeUp 0.5s ease 1.55s forwards;
+    }
+    .links a {
+      font-size: 0.8rem; font-weight: 500; color: var(--black);
+      text-decoration: none; letter-spacing: 0.04em;
+      position: relative; padding-bottom: 2px; cursor: none;
+    }
+    .links a::after {
+      content: ''; position: absolute; bottom: 0; left: 0;
+      width: 100%; height: 1px; background: var(--black);
+      transform-origin: left; transition: transform 0.28s ease;
+    }
+    .links a:hover::after { transform: scaleX(0); transform-origin: right; }
+    .links a:hover { opacity: 0.5; }
+
+    /* ── RIGHT ── */
+    .right { flex: 1; padding: 56px 60px; overflow-y: auto; }
+
+    .section-label {
+      font-size: 0.7rem; font-weight: 500; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--gray); margin-bottom: 32px;
+      opacity: 0; animation: fadeUp 0.5s ease 0.3s forwards;
+    }
+    .right h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.4rem; font-weight: 600;
+      letter-spacing: -0.02em; margin-bottom: 8px; line-height: 1.1;
+      clip-path: inset(0 100% 0 0);
+      animation: revealText 0.75s cubic-bezier(0.22,1,0.36,1) 0.4s forwards;
+    }
+    @keyframes revealText { to { clip-path: inset(0 0% 0 0); } }
+    .subtitle {
+      color: var(--gray); font-size: 0.95rem; margin-bottom: 48px;
+      opacity: 0; animation: fadeUp 0.5s ease 0.65s forwards;
+    }
+
+    /* ── PROJECTS ── */
+    .project-grid { border-top: 1px solid var(--border); }
+
+    .project {
+      padding: 36px 0; border-bottom: 1px solid var(--border);
+      display: grid; grid-template-columns: 48px 1fr;
+      gap: 0 28px; align-items: start;
+      position: relative; overflow: hidden;
+      opacity: 0; transform: translateY(22px);
+      transition: padding 0.3s ease, margin 0.3s ease, background 0.25s ease;
+    }
+    .project.visible { animation: fadeUp 0.6s cubic-bezier(0.22,1,0.36,1) forwards; }
+    .project:nth-child(1).visible { animation-delay: 0s; }
+    .project:nth-child(2).visible { animation-delay: 0.11s; }
+    .project:nth-child(3).visible { animation-delay: 0.22s; }
+
+    /* vertical accent bar */
+    .project::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+      width: 3px; background: var(--black);
+      transform: scaleY(0); transform-origin: top;
+      transition: transform 0.32s ease;
+    }
+    .project:hover::before { transform: scaleY(1); }
+    .project:hover {
+      background: var(--light);
+      padding-left: 16px; padding-right: 16px; margin: 0 -16px;
+    }
+
+    @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+    .project-num {
+      font-family: 'Playfair Display', serif; font-size: 1.2rem;
+      color: var(--border); padding-top: 3px; user-select: none;
+      transition: color 0.3s;
+    }
+    .project:hover .project-num { color: #b0b0b0; }
+
+    .project h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem; font-weight: 600;
+      margin-bottom: 10px; letter-spacing: -0.01em;
+      transition: letter-spacing 0.3s;
+    }
+    .project:hover h3 { letter-spacing: 0.01em; }
+
+    .project p {
+      font-size: 0.875rem; line-height: 1.75; color: #444; margin-bottom: 18px;
+    }
+
+    /* button fill-wipe */
+    .viewgit {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.75rem; font-weight: 500; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--black); text-decoration: none;
+      border: 1px solid var(--black); padding: 7px 16px; border-radius: 2px;
+      position: relative; overflow: hidden;
+      transition: color 0.3s; cursor: none;
+    }
+    .viewgit::before {
+      content: ''; position: absolute; inset: 0;
+      background: var(--black);
+      transform: translateX(-101%);
+      transition: transform 0.32s cubic-bezier(0.22,1,0.36,1);
+      z-index: 0;
+    }
+    .viewgit:hover::before { transform: translateX(0); }
+    .viewgit:hover { color: var(--white); }
+    .viewgit span, .viewgit svg { position: relative; z-index: 1; }
+    .viewgit svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .wrapper { flex-direction: column; }
+      .left { width: 100%; height: auto; position: static; }
+      .right { padding: 40px 24px; }
+      .left { padding: 40px 24px; }
+      body { cursor: auto; }
+      .cursor-dot, .cursor-ring { display: none; }
+    }
+  </style>
+</head>
 <body>
 
-<div class="container">
+<div class="cursor-dot" id="dot"></div>
+<div class="cursor-ring" id="ring"></div>
 
-    <!-- LEFT COLUMN -->
-    <div class="left">
+<div class="wrapper">
 
-        <h1>Khai Nguyen</h1>
+  <!-- LEFT -->
+  <aside class="left">
+    <img src="avarta.png" alt="Khai Nguyen" class="avatar">
+    <h1>Khai Nguyen</h1>
+    <p class="role">IT Student</p>
+    <div class="divider"></div>
+    <p class="bio">
+      Interested in Web Development and Backend systems.
+      Building things with Java, React, NestJS, PHP, and MySQL.
+    </p>
+    <div class="tags">
+      <span class="tag">Java</span>
+      <span class="tag">PHP MVC</span>
+      <span class="tag">MySQL</span>
+      <span class="tag">React</span>
+      <span class="tag">NestJS</span>
+      <span class="tag">Node.js</span>
+    </div>
+    <div class="links">
+      <a href="Resume.pdf">Resume</a>
+      <a href="https://github.com/KhaiNguyen273">GitHub</a>
+    </div>
+  </aside>
 
-        <img src="avarta.png" class="avatar">
+  <!-- RIGHT -->
+  <main class="right">
+    <p class="section-label">Selected Work</p>
+    <h1>Portfolio</h1>
+    <p class="subtitle">A collection of projects built during my studies.</p>
 
-        <div class="links">
-            <a href="Resume.pdf">Resume</a> |
-            <!-- <a href="#">LinkedIn</a> | -->
-            <a href="https://github.com/KhaiNguyen273">GitHub</a>
+    <div class="project-grid">
+
+      <div class="project">
+        <span class="project-num">01</span>
+        <div class="project-body">
+          <h3>Bus Tracking Website</h3>
+          <p>Real-time tracking platform for school buses and students, built with ReactJS, NodeJS, and Socket.IO. Administrators and parents can monitor locations and movements instantly — no page refresh needed.</p>
+          <a href="https://github.com/suvietnam37/DoAnCNPM_SSB1" class="viewgit">
+            <svg viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+            <span>View on GitHub</span>
+          </a>
         </div>
+      </div>
 
-        <p>
-        I am an Information Technology student interested in
-        Web Development and Backend systems.
-        </p>
+      <div class="project">
+        <span class="project-num">02</span>
+        <div class="project-body">
+          <h3>Mobile Phone Inventory Management</h3>
+          <p>A Java application for managing mobile phone stock. Covers importing and exporting products, monitoring quantities, and generating statistical reports — all through a clean, easy-to-use interface.</p>
+          <a href="https://github.com/Vunas/QLDT" class="viewgit">
+            <svg viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+            <span>View on GitHub</span>
+          </a>
+        </div>
+      </div>
 
-        <p>
-        I have experience with Java, PHP MVC, MySQL,
-        React, and NestJS.
-        </p>
+      <div class="project">
+        <span class="project-num">03</span>
+        <div class="project-body">
+          <h3>E-commerce Website</h3>
+          <p>An online shopping platform with integrated simulated payment gateways (MoMo, VNPay). Users can browse products, add items to cart, and complete checkout — demonstrating real-world payment flow integration.</p>
+          <a href="https://github.com/JacketHeee/TMDT" class="viewgit">
+            <svg viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+            <span>View on GitHub</span>
+          </a>
+        </div>
+      </div>
 
     </div>
-
-
-    <!-- RIGHT COLUMN -->
-    <div class="right">
-
-        <h1>Portfolio</h1>
-
-        <hr>
-
-        <h2>Web Development Projects</h2>
-
-        <div class="project">
-
-            <h3>Bus Tracking Website</h3>
-
-            <p>
-            **The website was developed to provide real-time tracking of school buses and students, 
-            allowing administrators and parents to monitor locations and movements instantly. 
-            The system is built using modern web technologies, combining ReactJS for the interactive user interface, 
-            NodeJS for the backend server, and Socket.IO to enable real-time communication between the client and the server. 
-            This integration allows the platform to continuously update bus locations and student status without requiring page refreshes, 
-            ensuring accurate and up-to-date information at all times.**
-
-            </p>
-
-            <a href="https://github.com/suvietnam37/DoAnCNPM_SSB1" class="viewgit">View on GitHub</a>
-
-        </div>
-
-
-        <div class="project">
-
-            <h3>Mobile Phone Inventory Management System</h3>
-
-            <p>
-            The application is developed using Java to manage a mobile phone inventory system. It provides essential functions such as importing and exporting products, managing stock levels, and generating statistical reports. The system is designed with a simple and user-friendly interface, allowing users to easily track inventory, monitor product quantities, and manage warehouse operations efficiently. This helps improve accuracy in stock management and simplifies daily inventory tasks.
-            </p>
-
-            <a href="https://github.com/Vunas/QLDT" class="viewgit">View on GitHub</a>
-
-        </div>
-
-
-        <div class="project">
-
-            <h3>E-commerce Website</h3>
-
-            <p>
-            This e-commerce website was developed to provide an online shopping platform with a simple and user-friendly interface. The system integrates simulated payment gateways such as MoMo and VNPay to handle online transactions. Users can browse products, add items to the cart, and complete purchases through the simulated payment process. The platform focuses on delivering a smooth shopping experience while demonstrating how modern payment systems can be integrated into an e-commerce application.
-            </p>
-
-            <a href="https://github.com/JacketHeee/TMDT" class="viewgit">View on GitHub</a>
-
-        </div>
-
-    </div>
+  </main>
 
 </div>
 
+<script>
+  // ── Custom cursor ──
+  const dot  = document.getElementById('dot');
+  const ring = document.getElementById('ring');
+
+  let rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    dot.style.left = e.clientX + 'px';
+    dot.style.top  = e.clientY + 'px';
+    // ring follows with slight lag via rAF lerp
+    rx = e.clientX; ry = e.clientY;
+  });
+
+  // lerp ring for smooth trailing
+  let crx = 0, cry = 0;
+  function animateRing() {
+    crx += (rx - crx) * 0.14;
+    cry += (ry - cry) * 0.14;
+    ring.style.left = crx + 'px';
+    ring.style.top  = cry + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  // ring expand on interactive elements
+  document.querySelectorAll('a, .tag, .avatar').forEach(el => {
+    el.addEventListener('mouseenter', () => ring.classList.add('hovered'));
+    el.addEventListener('mouseleave', () => ring.classList.remove('hovered'));
+  });
+
+  // ── Intersection observer: project reveal ──
+  const projects = document.querySelectorAll('.project');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        obs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  projects.forEach(p => obs.observe(p));
+</script>
 </body>
 </html>
